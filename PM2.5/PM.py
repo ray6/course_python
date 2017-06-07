@@ -46,8 +46,8 @@ def GetDataFromFile():
 				cnt = 1
 
 			date = rawlist.pop(0)
-			for i in range(countDate(date)-cnt):
-				data[local].append((DaytoDate(cnt),loss))
+			for i in range(CD(date)-cnt):
+				data[local].append((DTD(cnt),loss))
 				cnt += 1
 			rawlist.pop(0)
 			data[local].append((date, rawlist))
@@ -69,26 +69,26 @@ def GeneratePM25File():
 			g.write(data[local][i][0]+","+local+",PM2.5"+s+"\n")
 	g.close()
 
-def countDate(s):
+def CD(s):
 	s = s.split("/")
-	mon = int(s[1])
-	date = int(s[2])
-	year = {1:0, 2:31, 3:59, 4:90, 5:120, 6:151,
+	m = int(s[1])
+	da = int(s[2])
+	dit = {1:0, 2:31, 3:59, 4:90, 5:120, 6:151,
 			7:181, 8:212, 9:243, 10:273, 11:304, 12:334}
-	day = year[mon]+date
-	return day
-def DaytoDate(a):
-	year = {1:0, 2:31, 3:59, 4:90, 5:120, 6:151,
+	d = dit[m]+da
+	return d
+def DTD(a):
+	dit = {1:0, 2:31, 3:59, 4:90, 5:120, 6:151,
 			7:181, 8:212, 9:243, 10:273, 11:304, 12:334}
-	for key, value in year.items():
-		if key != 12:
-			if value < a <= year[key+1]:
-				date = "2015/"+str(key)+"/"+str(a-value)
+	for k, v in dit.items():
+		if k != 12:
+			if v < a <= dit[k+1]:
+				d = "2015/"+str(k)+"/"+str(a-v)
 				break
 		else:
-			date = "2015/"+str(key)+"/"+str(a-value)
+			d = "2015/"+str(k)+"/"+str(a-v)
 			break
-	return date
+	return d
 
 
 def Dist(x, y):
@@ -120,14 +120,14 @@ def FoundNeighbor(local, day, k):
 		if local != lo:
 			d = Dist(data[local][day][1], data[lo][day][1])
 			s = Sim(data[local][day][1], data[lo][day][1])
-			if dist[k-1][0] > d:
-				dist.pop()
-				dist.append((d, lo))
-				dist.sort()
-			if sim[k-1][0] > s:
-				sim.pop()
-				sim.append((s, lo))
-				sim.sort()
+			for i in range(k):
+				if dist[i][0] > d:
+					dist[i] = (d, lo)
+					break
+			for j in range(k):
+				if sim[i][0] > s:
+					sim[i] = (s, lo)
+					break
 
 	print('distance:')
 	for i in range(k):
@@ -173,7 +173,7 @@ if __name__ == "__main__":
 		date = raw_input('year/month/day:')
 		k = raw_input('Find ? neighbor:')
 		locate = locate.decode('utf-8')
-		day = countDate(date)
+		day = CD(date)
 
 		FoundNeighbor(locate, day, int(k))
 
