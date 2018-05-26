@@ -106,36 +106,44 @@ def Sim(x,y):
 		tmp += x[i]*y[i]
 		tmpx += x[i]*x[i]
 		tmpy += y[i]*y[i]
-	tmp = tmp/(sqrt(tmpx)*sqrt(tmpy))
+	try:
+		tmp = tmp/(sqrt(tmpx)*sqrt(tmpy))
+	except:
+		return 1.0
 	return tmp
 
 def FoundNeighbor(local, day, k):
 	dist = []
 	sim = []
 	for i in range(k):
-		dist.append((1000,1))
-		sim.append((1000,1))
+		dist.append((1000,'',1))
+		sim.append((0.0,0,1))
 	day -= 1
 	for lo in locations:
 		if local != lo:
-			d = Dist(data[local][day][1], data[lo][day][1])
-			s = Sim(data[local][day][1], data[lo][day][1])
-			if dist[k-1][0] > d:
-				dist.pop()
-				dist.append((d, lo))
-				dist.sort()
-			if sim[k-1][0] > s:
-				sim.pop()
-				sim.append((s, lo))
-				sim.sort()
+			for a in range(len(data[local])):
+				d = Dist(data[local][a][1], data[lo][a][1])
+				s = Sim(data[local][a][1], data[lo][a][1])
+				if dist[k-1][0] > d:
+					dist.pop()
+					dist.append((d, a, lo))
+					dist.sort()
+				if sim[k-1][0] > s:
+					sim.pop()
+					sim.append((s, a, lo))
+					sim.sort()
 
 	print('distance:')
 	for i in range(k):
-		lo = dist[i][1]
+		da = DaytoDate(int(dist[i][1]))
+		lo = dist[i][2]
+		print(da),
 		print(lo)
 	print('Similarity:')
 	for i in range(k):
-		lo = sim[i][1]
+		da = DaytoDate(int(sim[i][1]))
+		lo = sim[i][2]
+		print(da),
 		print(lo)
 
 
